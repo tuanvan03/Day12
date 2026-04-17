@@ -27,7 +27,9 @@ from fastapi.security.api_key import APIKeyHeader
 import uvicorn
 from utils.mock_llm import ask
 from pydantic import BaseModel
+from dotenv import load_dotenv
 
+load_dotenv()
 class AskRequest(BaseModel):
     question: str
 

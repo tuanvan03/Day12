@@ -29,6 +29,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 import uvicorn
 from utils.mock_llm import ask
+from pydantic import BaseModel 
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
@@ -37,6 +38,8 @@ START_TIME = time.time()
 _is_ready = False
 _in_flight_requests = 0  # đếm số request đang xử lý
 
+class AskRequest(BaseModel):
+    question: str
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -91,10 +94,10 @@ def root():
 
 
 @app.post("/ask")
-async def ask_agent(question: str):
+async def ask_agent(question: AskRequest):
     if not _is_ready:
         raise HTTPException(503, "Agent not ready")
-    return {"answer": ask(question)}
+    return {"answer": ask(question.question)}
 
 
 # ──────────────────────────────────────────────────────────
@@ -172,26 +175,26 @@ def ready():
 # GRACEFUL SHUTDOWN
 # ──────────────────────────────────────────────────────────
 
-def handle_sigterm(signum, frame):
+def shutdown_handler(signum, frame):
     """
     SIGTERM là signal platform gửi khi muốn dừng container.
     Khác với SIGKILL (không thể catch được).
 
-    uvicorn bắt SIGTERM tự động và gọi lifespan shutdown.
-    Hàm này để log thêm thông tin.
+    uvicorn bắt SIGTERM/SIGINT tự động và gọi lifespan shutdown.
+    Hàm này chỉ để log thêm thông tin cho rõ ràng.
     """
     logger.info(f"Received signal {signum} — uvicorn will handle graceful shutdown")
 
 
-signal.signal(signal.SIGTERM, handle_sigterm)
-signal.signal(signal.SIGINT, handle_sigterm)
+signal.signal(signal.SIGTERM, shutdown_handler)
+signal.signal(signal.SIGINT, shutdown_handler)
 
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
     logger.info(f"Starting agent on port {port}")
     uvicorn.run(
-        app,
+        "app:app",
         host="0.0.0.0",
         port=port,
         # ✅ Cho phép graceful shutdown
