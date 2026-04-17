@@ -38,3 +38,12 @@ curl -X 'GET' \
 curl -X 'GET' \
   'https://tuantest-production.up.railway.app/health' \
   -H 'accept: application/json'
+
+for i in {1..15}; do 
+  curl -H "X-API-Key: secret" \
+       -H "Content-Type: application/json" \
+       https://tuantest-production.up.railway.app/ask \
+       -X POST -d '{"user_id":"test","question":"test"}'
+       
+  echo ""
+done

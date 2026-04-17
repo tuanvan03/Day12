@@ -2,6 +2,10 @@
 
 > Dựa trên file `CODE_LAB.md`
 
+> **Student Name:** Đoàn Văn Tuấn
+> **Student ID:** 2A202600046  
+> **Date:** 17/04/2026
+
 ## Part 1: Localhost vs Production
 
 ### Ex1.1: Phát hiện anti-patterns
