@@ -36,9 +36,10 @@ if not logger.handlers:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # FastAPI and Uvicorn natively handle Graceful shutdown (SIGTERM)
     logger.info(f"Starting instance {INSTANCE_ID}")
     yield
-    logger.info(f"Instance {INSTANCE_ID} shutting down")
+    logger.info(f"Instance {INSTANCE_ID} shutting down gracefully via SIGTERM")
 
 app = FastAPI(title="Production Agent", lifespan=lifespan)
 

@@ -19,6 +19,22 @@ curl -s -X POST http://localhost/ask \
 
 ## Deploying to Railway
 
+link: https://tuantest-production.up.railway.app
 
-## Deploying to Render
+curl -X 'POST' \
+  'https://tuantest-production.up.railway.app/ask' \
+  -H 'accept: application/json' \
+  -H 'x-api-key: secret' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "question": "hello",
+  "user_id": "user1"
+}'
 
+curl -X 'GET' \
+  'https://tuantest-production.up.railway.app/ready' \
+  -H 'accept: application/json'
+
+curl -X 'GET' \
+  'https://tuantest-production.up.railway.app/health' \
+  -H 'accept: application/json'
